@@ -1,8 +1,8 @@
 import {APIError} from "@/types/errors/error";
-import {NextFunction, Request, Response} from "express";
+import {Request, Response} from "express";
 import * as console from "console";
 
-const errorMiddleware = (error: APIError, req: Request, res: Response, next: NextFunction) => {
+const errorMiddleware = (error: APIError, req: Request, res: Response) => {
     try {
         res.error = error
         res.status(eror.statusCode).json(error.toJSON())
