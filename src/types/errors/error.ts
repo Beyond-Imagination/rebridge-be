@@ -4,7 +4,7 @@ export class APIError extends Error {
     message: string
 
     constructor(statusCode: number, errorCode: number, message: string) {
-        super(message);
+        super(message)
 
         this.statusCode = statusCode
         this.errorCode = errorCode

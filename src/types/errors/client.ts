@@ -1,4 +1,4 @@
-import {APIError} from "@/types/errors/error";
+import { APIError } from '@/types/errors/error'
 
 export class BadRequest extends APIError {
     constructor() {
@@ -15,4 +15,3 @@ export class Unauthorized extends APIError {
         Error.captureStackTrace(this, Unauthorized)
     }
 }
-

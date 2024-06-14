@@ -1,9 +1,23 @@
-import globals from "globals";
-import tseslint from "typescript-eslint";
-
+// eslint.config.mjs
+import eslintPlugin from 'eslint-plugin-prettier';
+import typescriptEslintPlugin from '@typescript-eslint/eslint-plugin';
+import typescriptEslintParser from '@typescript-eslint/parser';
 
 export default [
-  {files: ["**/*.js"], languageOptions: {sourceType: "commonjs"}},
-  {languageOptions: { globals: globals.browser }},
-  ...tseslint.configs.recommended,
+  {
+    files: ['**/*.ts', '**/*.tsx'],
+    languageOptions: {
+      parser: typescriptEslintParser,
+      ecmaVersion: 'latest',
+      sourceType: 'module',
+    },
+    plugins: {
+      prettier: eslintPlugin,
+      '@typescript-eslint': typescriptEslintPlugin,
+    },
+    rules: {
+      'prettier/prettier': 'error',
+      'no-unused-vars': ['error', { argsIgnorePattern: 'req|res|next|reject' }],
+    },
+  },
 ];
