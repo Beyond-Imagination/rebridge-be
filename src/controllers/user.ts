@@ -7,6 +7,7 @@ export async function healthCheck(req: Request, res: Response) {
     res.status(200).send('OK')
 }
 
+// TODO: remove this function
 export async function addUser(req: Request, res: Response) {
     try {
         const data = {
