@@ -63,6 +63,7 @@ class App {
 
     private setControllers() {
         this.app.use('/user', routers.user)
+        this.app.use('/train', routers.train)
     }
 }
 
