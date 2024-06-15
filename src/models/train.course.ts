@@ -1,12 +1,14 @@
 import { TimeStamps } from '@typegoose/typegoose/lib/defaultClasses'
 import mongoose from 'mongoose'
-import { prop, Ref } from '@typegoose/typegoose'
+import { getModelForClass, prop, Ref } from '@typegoose/typegoose'
+import { TrainCenter } from '@models/train.center'
 
+// TODO: 추후에 N+1 문제가 발생할 수 있음
 export class TrainCourse extends TimeStamps {
     public _id: mongoose.Types.ObjectId
 
-    @prop()
-    public trainstCSTId: Ref<any> // TODO: 추후에 TrainCenter 모델 추가되면 수정
+    @prop({ ref: 'TrainCenter' })
+    public trainstCSTId: Ref<TrainCenter>
 
     @prop()
     public ncsCd: string // NCS 직무분류
@@ -71,3 +73,5 @@ export class TrainCourse extends TimeStamps {
     @prop()
     public trainEndDate: string // 훈련종료일자 (yyyy-mm-dd)
 }
+
+export const TrainCourseModel = getModelForClass(TrainCourse)
