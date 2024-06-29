@@ -1,11 +1,12 @@
 import express from 'express'
-import dbConnector from '@models/connector'
-import { logger } from '@typegoose/typegoose/lib/logSettings'
 import cookieParser from 'cookie-parser'
 import hpp from 'hpp'
 import helmet from 'helmet'
 import compression from 'compression'
 import mongoose from 'mongoose'
+
+import dbConnector from '@models/connector'
+import { logger } from '@typegoose/typegoose/lib/logSettings'
 import routers from './routers'
 
 class App {

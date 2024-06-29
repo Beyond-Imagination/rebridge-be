@@ -1,9 +1,9 @@
 import { APIError } from '@/types/errors/error'
-import { Request, Response } from 'express'
+import { NextFunction, Request, Response } from 'express'
 
-const errorMiddleware = (error: APIError, req: Request, res: Response) => {
+const errorMiddleware = (error: APIError, req: Request, res: Response, next: NextFunction) => {
     try {
-        res.error = error
+        res.meta.error = error
         res.status(eror.statusCode).json(error.toJSON())
     } catch (e) {
         // TODO: add logger

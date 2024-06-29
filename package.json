@@ -4,7 +4,7 @@
   "author": "Beyond_Imagination <team@beyond-imagination.kr>",
   "license": "Apache-2.0",
   "scripts": {
-    "start": "pnpm build && cross-env NODE_ENV=production node dist/app.js",
+    "start": "pnpm build && cross-env NODE_ENV=production node dist/server.js",
     "test": "jest",
     "dev": "cross-env NODE_ENV=development nodemon",
     "debug": "cross-env NODE_ENV=development nodemon --inspect",
@@ -15,12 +15,16 @@
     "prepare": "husky"
   },
   "dependencies": {
+    "bcrypt": "^5.1.1",
+    "compression": "^1.7.4",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "cross-env": "^7.0.3",
     "envalid": "^8.0.0",
     "express": "^4.19.2",
+    "express-asyncify": "^2.1.2",
     "helmet": "^7.1.0",
+    "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.7.0",
     "mongoose": "^8.4.1",
     "mongoose-paginate-v2": "^1.8.2",
