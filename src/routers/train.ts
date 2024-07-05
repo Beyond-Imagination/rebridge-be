@@ -1,6 +1,7 @@
 import express, { Router } from 'express'
 import { courseHealthCheck } from '@/controllers/train.course'
 import { centerHealthCheck } from '@/controllers/train.center'
+import { categorySummary, regionDetail, regionSummary } from '@/controllers/train.statistic'
 
 const router: Router = express.Router()
 
@@ -11,5 +12,11 @@ router.get('/health-check', (req, res) => {
 router.get('/course/health-check', courseHealthCheck)
 
 router.get('/center/health-check', centerHealthCheck)
+
+router.get('/statistic/region-summary', regionSummary)
+
+router.get('/statistic/category-summary', categorySummary)
+
+router.get('/statistic/region-detail', regionDetail)
 
 export default router

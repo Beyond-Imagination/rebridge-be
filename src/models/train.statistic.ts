@@ -1,5 +1,5 @@
 import mongoose from 'mongoose'
-import { getModelForClass, prop } from '@typegoose/typegoose'
+import { getModelForClass, prop, ReturnModelType } from '@typegoose/typegoose'
 import fs from 'fs'
 import path from 'path'
 
@@ -33,6 +33,98 @@ export class TrainStatistic {
             trainCourseNm: this.trainCourseNm,
             trainCourseRoundNm: this.trainCourseRoundNm,
         }
+    }
+
+    public static async getSummaryByRegion(this: ReturnModelType<typeof TrainStatistic>, year: number): Promise<mongoose.Aggregate<any[]>> {
+        const pipeline: mongoose.PipelineStage[] = [
+            {
+                $match: {
+                    ...(year !== 0 && { year: year }),
+                },
+            },
+            {
+                $group: {
+                    _id: '$region',
+                    trainCenterNm: { $sum: '$trainCenterNm' },
+                    trainCourseNm: { $sum: '$trainCourseNm' },
+                    trainCourseRoundNm: { $sum: '$trainCourseRoundNm' },
+                },
+            },
+            {
+                $project: {
+                    _id: 0,
+                    region: '$_id',
+                    trainCenterNm: 1,
+                    trainCourseNm: 1,
+                    trainCourseRoundNm: 1,
+                },
+            },
+        ]
+
+        return this.aggregate(pipeline)
+    }
+
+    public static async getSummaryByCategory(this: ReturnModelType<typeof TrainStatistic>, year: number): Promise<mongoose.Aggregate<any[]>> {
+        const pipeline: mongoose.PipelineStage[] = [
+            {
+                $match: {
+                    ...(year !== 0 && { year: year }),
+                },
+            },
+            {
+                $group: {
+                    _id: '$category',
+                    trainCenterNm: { $sum: '$trainCenterNm' },
+                    trainCourseNm: { $sum: '$trainCourseNm' },
+                    trainCourseRoundNm: { $sum: '$trainCourseRoundNm' },
+                },
+            },
+            {
+                $project: {
+                    _id: 0,
+                    category: '$_id',
+                    trainCenterNm: 1,
+                    trainCourseNm: 1,
+                    trainCourseRoundNm: 1,
+                },
+            },
+        ]
+
+        return this.aggregate(pipeline)
+    }
+
+    public static async getDetailByRegion(
+        this: ReturnModelType<typeof TrainStatistic>,
+        region: string,
+        year: number,
+    ): Promise<mongoose.Aggregate<any[]>> {
+        const pipeline: mongoose.PipelineStage[] = [
+            {
+                $match: {
+                    region: region,
+                    ...(year !== 0 && { year: year }),
+                },
+            },
+            {
+                $group: {
+                    _id: '$category',
+                    trainCenterNm: { $sum: '$trainCenterNm' },
+                    trainCourseNm: { $sum: '$trainCourseNm' },
+                    trainCourseRoundNm: { $sum: '$trainCourseRoundNm' },
+                },
+            },
+            {
+                $project: {
+                    _id: 0,
+                    category: '$_id',
+                    trainCenterNm: 1,
+                    trainCourseNm: 1,
+                    trainCourseRoundNm: 1,
+                },
+            },
+        ]
+
+        return this.aggregate(pipeline)
     }
 }
 
