@@ -47,6 +47,9 @@ importers:
       mongoose-paginate-v2:
         specifier: ^1.8.2
         version: 1.8.2
+      reflect-metadata:
+        specifier: ^0.2.2
+        version: 0.2.2
       ts-node-dev:
         specifier: ^2.0.0
         version: 2.0.0(@swc/core@1.5.25(@swc/helpers@0.5.11))(@types/node@20.14.2)(typescript@5.4.5)

@@ -6,7 +6,7 @@ import compression from 'compression'
 import mongoose from 'mongoose'
 
 import dbConnector from '@models/connector'
-import { logger } from '@typegoose/typegoose/lib/logSettings'
+import { logger } from '@utils/logger'
 import routers from './routers'
 
 class App {
