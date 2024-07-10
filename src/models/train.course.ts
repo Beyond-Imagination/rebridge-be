@@ -1,9 +1,9 @@
 import { TimeStamps } from '@typegoose/typegoose/lib/defaultClasses'
 import mongoose from 'mongoose'
-import { getModelForClass, prop, Ref } from '@typegoose/typegoose'
+import { getModelForClass, index, prop, Ref } from '@typegoose/typegoose'
 import { TrainCenter } from '@models/train.center'
 
-// TODO: 추후에 N+1 문제가 발생할 수 있음
+@index({ title: 1, category: 1 })
 export class TrainCourse extends TimeStamps {
     public _id: mongoose.Types.ObjectId
 
@@ -14,7 +14,7 @@ export class TrainCourse extends TimeStamps {
     public ncsCd: string // NCS 직무분류
 
     @prop()
-    public ncsLv: number // NCS 수준
+    public ncsLv: string // NCS 수준
 
     @prop()
     public ncsApplay: boolean // NCS 적용여부
@@ -72,6 +72,54 @@ export class TrainCourse extends TimeStamps {
 
     @prop()
     public trainEndDate: string // 훈련종료일자 (yyyy-mm-dd)
+}
+
+interface TrainCourseRawDataType {
+    trainCenter: string
+    telNo: string
+    title: string
+    trainStartDate: string
+    trainEndDate: string
+    trainTime: string
+    elEmplRate: string
+    courseMan: string
+    realMan: string
+    category: string
+    ncsCd: string
+    ncsLv: string
+    ncsApply: string
+    email: string
+    url: string
+    trainAvgAge: number
+    trainGoal: string
+    trainTarget: {
+        condition: { prerequisite: string; courseBenefit: string; career: string }
+    }
+}
+
+export const plainToTrainCourse = (obj: TrainCourseRawDataType): TrainCourse => {
+    const trainCourse = new TrainCourse()
+    trainCourse.ncsCd = obj.ncsCd
+    trainCourse.ncsLv = obj.ncsLv
+    trainCourse.ncsApplay = obj.ncsApply === 'Y'
+    trainCourse.title = obj.title
+    trainCourse.category = obj.category
+    trainCourse.url = obj.url
+    trainCourse.telNo = obj.telNo
+
+    trainCourse.trainAvgAge = obj.trainAvgAge || -1
+    trainCourse.elEmplRate = obj.elEmplRate || '-1'
+    trainCourse.trainTarget = null
+
+    trainCourse.trainStartDate = obj.trainStartDate
+    trainCourse.trainEndDate = obj.trainEndDate
+    trainCourse.trainPreCourse = obj.trainTarget?.condition?.prerequisite
+    trainCourse.trainPreQual = obj.trainTarget?.condition?.career
+    trainCourse.trainGoal = obj.trainGoal
+    trainCourse.trainStrength = obj.trainTarget?.condition?.courseBenefit
+    trainCourse.trainTime = obj.trainTime
+
+    return trainCourse
 }
 
 export const TrainCourseModel = getModelForClass(TrainCourse)

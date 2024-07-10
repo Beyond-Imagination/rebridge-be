@@ -1,8 +1,10 @@
 import { TimeStamps } from '@typegoose/typegoose/lib/defaultClasses'
 import mongoose from 'mongoose'
-import { getModelForClass, prop, Ref } from '@typegoose/typegoose'
+import { getModelForClass, index, prop, Ref } from '@typegoose/typegoose'
 import { TrainCourse } from '@models/train.course'
+import { getCoordination } from '@/batch/utils'
 
+@index({ inoNm: 'text', telNo: 'text' })
 export class TrainCenter extends TimeStamps {
     public _id: mongoose.Types.ObjectId
 
@@ -16,15 +18,12 @@ export class TrainCenter extends TimeStamps {
     public zipCd: string // 우편번호
 
     @prop()
-    public addr1: string // 주소지
+    public addr: string // 주소지
 
     @prop()
-    public addr2: string // 상세주소
-
-    @prop({ required: true })
     public longitude: number // 경도
 
-    @prop({ required: true })
+    @prop()
     public latitude: number // 위도
 
     @prop()
@@ -41,6 +40,22 @@ export class TrainCenter extends TimeStamps {
 
     @prop({ ref: 'TrainCourse' })
     public trainCourses: Ref<TrainCourse>[]
+}
+
+export async function plainToTrainCenter(obj: any): Promise<TrainCenter> {
+    const trainCenter = new TrainCenter()
+    trainCenter.inoNm = obj.inoNm
+    trainCenter.zipCd = obj.zipCd
+    trainCenter.addr = obj.addr
+    const coordinates = await getCoordination(obj.addr)
+    trainCenter.longitude = coordinates.longitude
+    trainCenter.latitude = coordinates.latitude
+    trainCenter.grade = obj.grade
+    trainCenter.telNo = obj.telNo
+    trainCenter.faxNo = obj.faxNo
+    trainCenter.email = obj.email
+    trainCenter.hpAddr = obj.hpAddr
+    return trainCenter
 }
 
 export const TrainCenterModel = getModelForClass(TrainCenter)
