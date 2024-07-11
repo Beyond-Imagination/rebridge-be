@@ -36,6 +36,7 @@ async function renewDatabase() {
         console.log('데이터베이스 초기화 성공')
     } else {
         console.log('취소합니다.')
+        process.exit(1)
     }
 
     try {
@@ -52,88 +53,54 @@ async function renewDatabase() {
         await TrainCenterModel.insertMany(centerModels)
         await TrainCourseModel.insertMany(courseModels)
 
-        // TrainCenter와 TrainCourse와의 연관관계를 매핑합니다.
-        coursePlainObjects = extractModelFromJson(courseFileString, COMPATIBLE_DATA_TYPES.COURSE, [])
-        // trainCourse => trainCenter로의 매핑
-        const bulkSaveCourseModels: TrainCourse[] = []
-        for (const obj of coursePlainObjects) {
-            // obj에서 {title, category} 를 통해서 model id를 가져온 다음 해당 모델을 업데이트
-            const model: TrainCourse = await TrainCourseModel.findOne({ title: obj.title, category: obj.category }).exec()
-            if (!model) {
-                throw new Error('Model not found')
-            }
-
-            const idx = obj.trainCenter - 1
-            if (idx < 0) {
-                throw new Error('idx must be greater than 0')
-            }
-            // centerPlainObjects에서 center Model을 가져오기 위한 정보를 가져온다
-            const { inoNm, telNo } = centerPlainObjects[idx]
-            const target: TrainCenter = await TrainCenterModel.findOne({ inoNm: inoNm, telNo: telNo }).exec()
-            if (!target) {
-                throw new Error('update target not found')
-            }
-
-            model.trainstCSTId = target._id
-            bulkSaveCourseModels.push(model)
-        }
-
-        console.log(`course -> center mapping 완료`)
-
-        centerPlainObjects = extractModelFromJson(centerFileString, COMPATIBLE_DATA_TYPES.CENTER, [])
-        const bulkSaveCenterModels: TrainCenter[] = []
-        for (const obj of centerPlainObjects) {
-            const model: TrainCenter = await TrainCenterModel.findOne({ inoNm: obj.inoNm, telNo: obj.telNo }).exec()
-            if (!model) {
-                throw new Error('Model not found')
-            }
-
-            const idxs: number[] = obj.trainCourses
-            if (idxs.length === 0) {
-                throw new Error('idxs must not be empty')
-            }
-
-            const updatedValue = []
-            for (const idx of idxs) {
-                if (idx < 0) {
-                    throw new Error('idx must be greater than 0')
-                }
-                const { telNo, title } = coursePlainObjects[idx]
-                const target: TrainCourse = await TrainCourseModel.findOne({ telNo: telNo, title: title }).exec()
-                if (!target) {
-                    throw new Error('update target not found')
-                }
-                updatedValue.push(target._id)
-            }
-            model.trainCourses = updatedValue
-            bulkSaveCenterModels.push(model)
-        }
-
-        console.log(`center -> <multiple> course mapping 완료`)
-        await TrainCourseModel.bulkWrite(
-            bulkSaveCourseModels.map(doc => ({
-                updateOne: {
-                    filter: { _id: doc._id },
-                    update: { $set: { trainstCSTId: doc.trainstCSTId } },
-                },
-            })),
-        )
-
-        await TrainCenterModel.bulkWrite(
-            bulkSaveCenterModels.map(doc => ({
-                updateOne: {
-                    filter: { _id: doc._id },
-                    update: { $set: { trainCourses: doc.trainCourses } },
-                },
-            })),
-        )
-
-        console.log('데이터베이스 갱신 성공')
+        await buildRelation(centerFileString, courseFileString)
     } catch (err) {
-        console.error('실패', err)
-    } finally {
-        mongoose.disconnect()
+        console.error(err)
+        process.exit(1)
     }
+}
+
+async function buildRelation(centerFileString: string, courseFileString: string) {
+    const trainCoursePlainObjects = extractModelFromJson(courseFileString, COMPATIBLE_DATA_TYPES.COURSE, [])
+    const trainCenterPlainObjects = extractModelFromJson(centerFileString, COMPATIBLE_DATA_TYPES.CENTER, [])
+
+    // course -> center
+    const promises1 = trainCoursePlainObjects.map(async course => {
+        const targetIndex = course.trainCenter as Number
+        const { inoNm, telNo } = trainCenterPlainObjects[targetIndex - 1]
+        const targetCenter = await TrainCenterModel.findOne({ inoNm: inoNm, telNo: telNo }).exec()
+        if (!targetCenter) {
+            throw new Error('No matching center')
+        }
+        const updatedCourse = await TrainCourseModel.findOne({ title: course.title, category: course.category }).exec()
+        if (!updatedCourse) {
+            throw new Error('No matching course')
+        }
+        updatedCourse.trainstCSTId = targetCenter._id
+        return await updatedCourse.save()
+    })
+
+    // center -> course
+    const promises2 = trainCenterPlainObjects.map(async center => {
+        const targetIndexes = center.trainCourses as Number[]
+        targetIndexes.map(async idx => {
+            const { title, category } = trainCoursePlainObjects[idx - 1]
+            const targetCourse = await TrainCourseModel.findOne({ title: title, category: category }).exec()
+            if (!targetCourse) {
+                throw new Error('No matching course')
+            }
+
+            const updatedCenter = await TrainCenterModel.findOne({ inoNm: center.inoNm, telNo: center.telNo }).exec()
+            if (!updatedCenter) {
+                throw new Error('No matching center')
+            }
+            updatedCenter.trainCourses.push(targetCourse._id)
+            return await updatedCenter.save()
+        })
+    })
+
+    const promises = promises1.concat(promises2)
+    await Promise.all(promises)
 }
 
 async function start() {
