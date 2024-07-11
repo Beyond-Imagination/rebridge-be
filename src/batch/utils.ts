@@ -47,6 +47,14 @@ interface IKakaoMapResponse {
     }[]
 }
 
+const replaceAddress = (address: string) => {
+    const parts: string[] = address.split(' ')
+    if (parts.length < 4) {
+        throw new Error("failed to replace address, because it doesn't have enough parts")
+    }
+    return `${parts[0]} ${parts[1]} ${parts[2]} ${parts[3]}`
+}
+
 export const getCoordination = async (query: string) => {
     const response = (
         await axiosInstance.get<IKakaoMapResponse>(`${process.env.KAKAO_MAP_URL}?query=${query}`, {
@@ -58,25 +66,17 @@ export const getCoordination = async (query: string) => {
 
     if (!response) {
         console.error(`No matching address found ==> ${query}`)
-        // const regexes: RegExp[] = [/(\S*시)\s.*(\S*로\s\d+)/]
-        // for (const regex in regexes) {
-        //     const matched: string[] = query.match(regex)
-        //     const retriedResponse = (
-        //         await axiosInstance.get<IKakaoMapResponse>(`${process.env.KAKAO_MAP_URL}?query=${query}`, {
-        //             headers: {
-        //                 Authorization: `KakaoAK ${process.env.KAKAO_API_KEY}`,
-        //             },
-        //         })
-        //     ).data.documents[0]
-        //
-        //     if (retriedResponse) {
-        //         return { longitude: retriedResponse.x, latitude: retriedResponse.y }
-        //     }
-        //
-        //     console.error(`No matching address found Retried ==> ${replacedQuery}`)
-        // }
-
-        console.log(`!!! need to update coordinate information !!! ==> ${query}`)
+        const replacedQuery = replaceAddress(query)
+        const retriedResponse = (
+            await axiosInstance.get<IKakaoMapResponse>(`${process.env.KAKAO_MAP_URL}?query=${replacedQuery}`, {
+                headers: {
+                    Authorization: `KakaoAK ${process.env.KAKAO_API_KEY}`,
+                },
+            })
+        ).data.documents[0]
+        if (retriedResponse) {
+            return { longitude: retriedResponse.x, latitude: retriedResponse.y }
+        }
         return { longitude: -1, latitude: -1 }
     }
 
