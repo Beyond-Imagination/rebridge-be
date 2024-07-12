@@ -43,16 +43,18 @@ export class Users extends TimeStamps {
 
     public static async signIn(this: ReturnModelType<typeof Users>, oauthId: string, password: string): Promise<string> {
         const user = await this.findByOauthId(oauthId)
-        const match = bcrypt.compare(password, user.passwd)
-        if (match) {
-            // TODO: change secret key
-            return jwt.sign({ id: user.oauthId, provider: user.oauthProvider }, 'secret-수정필요', {
-                expiresIn: '1h',
-                jwtid: v4(),
-            })
-        } else {
+        if (!user) {
             throw new SignInFailedError()
         }
+        const match = await bcrypt.compare(password, user.passwd)
+        if (!match) {
+            throw new SignInFailedError()
+        }
+        // TODO: change secret key
+        return jwt.sign({ id: user.oauthId, provider: user.oauthProvider }, 'secret-수정필요', {
+            expiresIn: '1h',
+            jwtid: v4(),
+        })
     }
 }
 
