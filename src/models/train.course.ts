@@ -119,6 +119,9 @@ export const plainToTrainCourse = (obj: TrainCourseRawDataType): TrainCourse => 
     trainCourse.trainStrength = obj.trainTarget?.condition?.courseBenefit
     trainCourse.trainTime = obj.trainTime
 
+    trainCourse.realMan = obj.realMan
+    trainCourse.courseMan = obj.courseMan
+
     return trainCourse
 }
 
