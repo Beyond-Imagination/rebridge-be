@@ -2,6 +2,7 @@ import { existsSync, mkdirSync } from 'fs'
 import { join } from 'path'
 import winston from 'winston'
 import winstonDaily from 'winston-daily-rotate-file'
+import expressWinston from 'express-winston'
 
 // logs dir
 const logDir: string = join(__dirname, '../../logs')
@@ -48,6 +49,29 @@ const winstonOption = {
     ],
 }
 
+const loggerMiddleware = expressWinston.logger({
+    ...winstonOption,
+    requestWhitelist: ['headers.origin', 'body', 'query'],
+    responseWhitelist: ['body', 'statusCode'],
+    bodyBlacklist: ['password', 'clientSecret', 'token', 'jwt', 'jwtPayload'],
+    headerBlacklist: ['authorization'],
+    ignoreRoute: function (req, res) {
+        return false
+    },
+    level: function (req, res) {
+        if (res.statusCode >= 500) {
+            return 'error'
+        } else if (res.statusCode >= 400) {
+            return 'warn'
+        }
+        return 'info'
+    },
+    meta: true,
+    dynamicMeta: function (req, res) {
+        return res.meta
+    },
+})
+
 const logger = winston.createLogger(winstonOption)
 
-export { logger }
+export { logger, loggerMiddleware }

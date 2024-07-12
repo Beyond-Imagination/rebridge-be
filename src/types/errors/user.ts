@@ -11,7 +11,7 @@ export class SignInFailedError extends APIError {
 export class SignUpFailError extends APIError {
     constructor() {
         super(400, 602, 'Signup failed')
-        Object.setPrototypeOf(this, SignUpFailError)
+        Object.setPrototypeOf(this, SignUpFailError.prototype)
         Error.captureStackTrace(this, SignUpFailError)
     }
 }

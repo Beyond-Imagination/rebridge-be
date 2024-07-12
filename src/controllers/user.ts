@@ -5,7 +5,6 @@ import bcrypt from 'bcrypt'
 import { UserModel } from '@models/user'
 import { logger } from '@utils/logger'
 import { SignUpFailError } from '@/types/errors/user'
-import JWTRequest from '@/middleware/verifyUser'
 
 export async function healthCheck(req: Request, res: Response) {
     res.status(200).send('OK')
@@ -54,7 +53,7 @@ export async function signUp(req: Request, res: Response) {
     }
 }
 
-export async function checkToken(req: JWTRequest, res: Response) {
+export async function checkToken(req: Request, res: Response) {
     const decode = req.decode
     return res.status(200).json({ message: '토큰 확인 완료', decode })
 }

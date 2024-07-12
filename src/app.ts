@@ -6,8 +6,9 @@ import compression from 'compression'
 import mongoose from 'mongoose'
 
 import dbConnector from '@models/connector'
-import { logger } from '@utils/logger'
+import { logger, loggerMiddleware } from '@utils/logger'
 import routers from './routers'
+import middleware from '@/middleware'
 
 class App {
     public app: express.Application
@@ -19,8 +20,9 @@ class App {
         this.env = process.env.NODE_ENV || 'development'
         this.port = process.env.PORT || 3000
         logger.info(`App is initializing at port: ${this.port}`)
-        this.initializeMiddlewares()
+        this.setPreMiddlewares()
         this.setControllers()
+        this.setPostMiddleware()
     }
 
     public async connectDB() {
@@ -33,12 +35,12 @@ class App {
         })
 
         const gracefulShutdownHandler = function gracefulShutdownHandler() {
-            console.log(`Gracefully shutting down`)
+            logger.info(`Gracefully shutting down`)
 
             setTimeout(() => {
                 console.log('Shutting down application')
                 server.close(async function () {
-                    console.log('All requests stopped, shutting down')
+                    logger.info('All requests stopped, shutting down')
                     await mongoose.connection.close(false)
                     process.exit()
                 })
@@ -53,13 +55,19 @@ class App {
         return this.app
     }
 
-    private initializeMiddlewares() {
+    private setPreMiddlewares() {
         this.app.use(hpp())
         this.app.use(helmet())
         this.app.use(compression())
         this.app.use(express.json())
         this.app.use(express.urlencoded({ extended: true }))
         this.app.use(cookieParser())
+        this.app.use(middleware.request.requestId)
+        this.app.use(loggerMiddleware)
+    }
+
+    private setPostMiddleware() {
+        this.app.use(middleware.error)
     }
 
     private setControllers() {

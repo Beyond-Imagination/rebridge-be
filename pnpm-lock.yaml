@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@typegoose/typegoose':
+        specifier: ^11.7.0
+        version: 11.7.1(mongoose@8.4.1)
       bcrypt:
         specifier: ^5.1.1
         version: 5.1.1
@@ -32,9 +35,15 @@ importers:
       express-asyncify:
         specifier: ^2.1.2
         version: 2.1.3(express@4.19.2)
+      express-winston:
+        specifier: ^4.2.0
+        version: 4.2.0(winston@3.13.0)
       helmet:
         specifier: ^7.1.0
         version: 7.1.0
+      hpp:
+        specifier: ^0.2.3
+        version: 0.2.3
       jsonwebtoken:
         specifier: ^9.0.2
         version: 9.0.2
@@ -53,16 +62,19 @@ importers:
       ts-node-dev:
         specifier: ^2.0.0
         version: 2.0.0(@swc/core@1.5.25(@swc/helpers@0.5.11))(@types/node@20.14.2)(typescript@5.4.5)
+      tslib:
+        specifier: ^2.6.3
+        version: 2.6.3
       uuid:
         specifier: ^10.0.0
         version: 10.0.0
       winston:
         specifier: ^3.13.0
         version: 3.13.0
+      winston-daily-rotate-file:
+        specifier: ^5.0.0
+        version: 5.0.0(winston@3.13.0)
     devDependencies:
-      '@eslint/js':
-        specifier: ^9.4.0
-        version: 9.4.0
       '@swc-node/core':
         specifier: ^1.13.1
         version: 1.13.1(@swc/core@1.5.25(@swc/helpers@0.5.11))(@swc/types@0.1.7)
@@ -78,9 +90,9 @@ importers:
       '@swc/helpers':
         specifier: ^0.5.11
         version: 0.5.11
-      '@typegoose/typegoose':
-        specifier: ^12.5.0
-        version: 12.5.0(mongoose@8.4.1)
+      '@types/bcrypt':
+        specifier: ^5.0.2
+        version: 5.0.2
       '@types/compression':
         specifier: ^1.7.5
         version: 1.7.5
@@ -93,9 +105,15 @@ importers:
       '@types/hpp':
         specifier: ^0.2.6
         version: 0.2.6
+      '@types/jsonwebtoken':
+        specifier: ^9.0.5
+        version: 9.0.6
       '@types/node':
         specifier: ^20.14.2
         version: 20.14.2
+      '@types/uuid':
+        specifier: ^9.0.7
+        version: 9.0.8
       '@typescript-eslint/eslint-plugin':
         specifier: ^7.12.0
         version: 7.12.0(@typescript-eslint/parser@7.12.0(eslint@9.4.0)(typescript@5.4.5))(eslint@9.4.0)(typescript@5.4.5)
@@ -120,15 +138,9 @@ importers:
       eslint-plugin-prettier:
         specifier: ^5.1.3
         version: 5.1.3(eslint-config-prettier@9.1.0(eslint@9.4.0))(eslint@9.4.0)(prettier@3.3.1)
-      express-winston:
-        specifier: ^4.2.0
-        version: 4.2.0(winston@3.13.0)
       globals:
         specifier: ^15.3.0
         version: 15.3.0
-      hpp:
-        specifier: ^0.2.3
-        version: 0.2.3
       husky:
         specifier: ^9.0.11
         version: 9.0.11
@@ -147,18 +159,9 @@ importers:
       tsconfig-paths:
         specifier: ^4.2.0
         version: 4.2.0
-      typegoose:
-        specifier: ^5.9.1
-        version: 5.9.1(mongoose@8.4.1)
       typescript:
         specifier: ^5.4.5
         version: 5.4.5
-      typescript-eslint:
-        specifier: ^7.12.0
-        version: 7.12.0(eslint@9.4.0)(typescript@5.4.5)
-      winston-daily-rotate-file:
-        specifier: ^5.0.0
-        version: 5.0.0(winston@3.13.0)
 
 packages:
 
@@ -372,11 +375,14 @@ packages:
   '@tsconfig/node16@1.0.4':
     resolution: {integrity: sha512-vxhUy4J8lyeyinH7Azl1pdd43GJhZH/tP2weN8TntQblOY+A0XbT8DJk1/oCPuOOyg/Ja757rG0CgHcWC8OfMA==}
 
-  '@typegoose/typegoose@12.5.0':
-    resolution: {integrity: sha512-+2ucXC89PrlPUIw/204X5+fjRDHfAXqdH5V40H1W1GcFA2G6yTi6eU22EO3Uq0nRyQyO9keFCzjcoQXUMJOvBQ==}
-    engines: {node: '>=16.20.1'}
+  '@typegoose/typegoose@11.7.1':
+    resolution: {integrity: sha512-+tFasAsrn7mSEpHJvRcmEpCaupntiaCFImd2w/swEj8Sx5v3YTrwdKV2hjesZhIoLIMSQ+CrsNo+Y9RqTnmRig==}
+    engines: {node: '>=14.17.0'}
     peerDependencies:
-      mongoose: ~8.4.0
+      mongoose: ~7.6.3
+
+  '@types/bcrypt@5.0.2':
+    resolution: {integrity: sha512-6atioO8Y75fNcbmj0G7UjI9lXN2pQ/IGJ2FWT4a/btd0Lk9lQalHLKhkgKVZ3r+spnmWUKfbMi1GEe9wyHQfNQ==}
 
   '@types/body-parser@1.19.5':
     resolution: {integrity: sha512-fB3Zu92ucau0iQ0JMCFQE7b/dv8Ot07NI3KaZIkIUNXq82k4eBAqUaneXfleGY9JWskeS9y+u0nXMyspcuQrCg==}
@@ -407,6 +413,9 @@ packages:
 
   '@types/http-errors@2.0.4':
     resolution: {integrity: sha512-D0CFMMtydbJAegzOyHjtiKPLlvnm3iTZyZRSZoLq2mRhDdmLfIWOCYPfQJ4cu2erKghU++QvjcUjp/5h7hESpA==}
+
+  '@types/jsonwebtoken@9.0.6':
+    resolution: {integrity: sha512-/5hndP5dCjloafCXns6SZyESp3Ldq7YjH3zwzwczYnjxIT0Fqzk5ROSYVGfFyczIue7IUEj8hkvLbPoLQ18vQw==}
 
   '@types/keyv@3.1.4':
     resolution: {integrity: sha512-BQ5aZNSCpj7D6K2ksrRCTmKRLEpnPvWDiLPfoGyhZ++8YtiK9d/3DBKPJgry359X/P1PfruyYwvnvwFjuEiEIg==}
@@ -440,6 +449,9 @@ packages:
 
   '@types/triple-beam@1.3.5':
     resolution: {integrity: sha512-6WaYesThRMCl19iryMYP7/x2OVgCtbIVflDGFpWnb9irXI3UjYE4AzmYuiUKY1AJstGijoY+MgUszMgRxIYTYw==}
+
+  '@types/uuid@9.0.8':
+    resolution: {integrity: sha512-jg+97EGIcY9AGHJJRaaPVgetKDsrTgbRjQ5Msgjh/DQKEFl0DtyRr/VCOyD1T2R1MNeWPK/u7JoGhlDZnKBAfA==}
 
   '@types/webidl-conversions@7.0.3':
     resolution: {integrity: sha512-CiJJvcRtIgzadHCYXw7dqEnMNRjhGZlYK05Mj9OyktqV8uVT8fD2BFOB7S1uwBE3Kj2Z+4UyPmFw/Ixgw/LAlA==}
@@ -2206,23 +2218,6 @@ packages:
     resolution: {integrity: sha512-TkRKr9sUTxEH8MdfuCSP7VizJyzRNMjj2J2do2Jr3Kym598JVdEksuzPQCnlFPW4ky9Q+iA+ma9BGm06XQBy8g==}
     engines: {node: '>= 0.6'}
 
-  typegoose@5.9.1:
-    resolution: {integrity: sha512-D+vMhNyZeKBZHrmJFZwOodl3T9W2NOXY+hbnW/f1n60oEL8+L15eryFc9C6fAKrlnkgpui+kdQnNXsLwx2MgCw==}
-    engines: {node: '>=8.10.0'}
-    deprecated: No longer maintained, use https://github.com/typegoose/typegoose
-    peerDependencies:
-      mongoose: ^5.6.7
-
-  typescript-eslint@7.12.0:
-    resolution: {integrity: sha512-D6HKNbQcnNu3BaN4HkQCR16tgG8Q2AMUWPgvhrJksOXu+d6ys07yC06ONiV2kcsEfWC22voB6C3PvK2MqlBZ7w==}
-    engines: {node: ^18.18.0 || >=20.0.0}
-    peerDependencies:
-      eslint: ^8.56.0
-      typescript: '*'
-    peerDependenciesMeta:
-      typescript:
-        optional: true
-
   typescript@5.4.5:
     resolution: {integrity: sha512-vcI4UpRgg81oIRUFwR0WSIHKt11nJ7SAVlYNIu+QpqeyXP+gpQJy/Z4+F0aGxSE4MqwjyXvW/TzgkLAx2AGHwQ==}
     engines: {node: '>=14.17'}
@@ -2549,14 +2544,18 @@ snapshots:
 
   '@tsconfig/node16@1.0.4': {}
 
-  '@typegoose/typegoose@12.5.0(mongoose@8.4.1)':
+  '@typegoose/typegoose@11.7.1(mongoose@8.4.1)':
     dependencies:
       lodash: 4.17.21
       loglevel: 1.9.1
       mongoose: 8.4.1
-      reflect-metadata: 0.2.2
+      reflect-metadata: 0.1.14
       semver: 7.6.2
       tslib: 2.6.3
+
+  '@types/bcrypt@5.0.2':
+    dependencies:
+      '@types/node': 20.14.2
 
   '@types/body-parser@1.19.5':
     dependencies:
@@ -2604,6 +2603,10 @@ snapshots:
 
   '@types/http-errors@2.0.4': {}
 
+  '@types/jsonwebtoken@9.0.6':
+    dependencies:
+      '@types/node': 20.14.2
+
   '@types/keyv@3.1.4':
     dependencies:
       '@types/node': 20.14.2
@@ -2638,6 +2641,8 @@ snapshots:
   '@types/strip-json-comments@0.0.30': {}
 
   '@types/triple-beam@1.3.5': {}
+
+  '@types/uuid@9.0.8': {}
 
   '@types/webidl-conversions@7.0.3': {}
 
@@ -4388,22 +4393,6 @@ snapshots:
     dependencies:
       media-typer: 0.3.0
       mime-types: 2.1.35
-
-  typegoose@5.9.1(mongoose@8.4.1):
-    dependencies:
-      mongoose: 8.4.1
-      reflect-metadata: 0.1.14
-
-  typescript-eslint@7.12.0(eslint@9.4.0)(typescript@5.4.5):
-    dependencies:
-      '@typescript-eslint/eslint-plugin': 7.12.0(@typescript-eslint/parser@7.12.0(eslint@9.4.0)(typescript@5.4.5))(eslint@9.4.0)(typescript@5.4.5)
-      '@typescript-eslint/parser': 7.12.0(eslint@9.4.0)(typescript@5.4.5)
-      '@typescript-eslint/utils': 7.12.0(eslint@9.4.0)(typescript@5.4.5)
-      eslint: 9.4.0
-    optionalDependencies:
-      typescript: 5.4.5
-    transitivePeerDependencies:
-      - supports-color
 
   typescript@5.4.5: {}
 

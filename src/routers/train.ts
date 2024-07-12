@@ -1,9 +1,10 @@
 import express, { Router } from 'express'
+import asyncify from 'express-asyncify'
 import { courseHealthCheck } from '@/controllers/train.course'
 import { centerHealthCheck } from '@/controllers/train.center'
 import { categorySummary, regionDetail, regionSummary } from '@/controllers/train.statistic'
 
-const router: Router = express.Router()
+const router: Router = asyncify(express.Router())
 
 router.get('/health-check', (req, res) => {
     res.status(200).send()
