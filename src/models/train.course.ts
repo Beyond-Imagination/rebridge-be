@@ -1,7 +1,8 @@
 import { TimeStamps } from '@typegoose/typegoose/lib/defaultClasses'
 import mongoose from 'mongoose'
-import { getModelForClass, index, prop, Ref } from '@typegoose/typegoose'
+import { getModelForClass, index, prop, Ref, ReturnModelType } from '@typegoose/typegoose'
 import { TrainCenter } from '@models/train.center'
+import { BadRequest } from '@/types/errors'
 
 @index({ title: 1, category: 1 })
 export class TrainCourse extends TimeStamps {
@@ -72,6 +73,47 @@ export class TrainCourse extends TimeStamps {
 
     @prop()
     public trainEndDate: string // 훈련종료일자 (yyyy-mm-dd)
+
+    public static async findByFilter(this: ReturnModelType<typeof TrainCourse>, filter: string): Promise<TrainCourse[]> {
+        let pipeLine: mongoose.PipelineStage[] = [
+            { $limit: 5 },
+            {
+                $lookup: {
+                    from: 'traincenters',
+                    localField: 'trainstCSTId',
+                    foreignField: '_id',
+                    as: 'trainCenter',
+                },
+            },
+            { $unwind: '$trainCenter' },
+            {
+                $project: {
+                    _id: 1,
+                    title: 1,
+                    elEmplRate: 1,
+                    trainStartDate: 1,
+                    trainEndDate: 1,
+                    addr: '$trainCenter.addr',
+                },
+            },
+        ]
+
+        if (filter === '마감') {
+            pipeLine = [
+                { $match: { trainStartDate: { $gte: new Date().toISOString().split('T')[0] } } },
+                { $sort: { trainStartDate: 1 } },
+                ...pipeLine,
+            ]
+        } else if (filter === '취업률') {
+            pipeLine = [{ $sort: { elEmplRate: -1 } }, ...pipeLine]
+        } else if (filter === '전액지원') {
+            pipeLine = [{ $match: { realMan: 0 } }, ...pipeLine]
+        } else {
+            throw new BadRequest()
+        }
+
+        return this.aggregate(pipeLine).exec()
+    }
 }
 
 interface TrainCourseRawDataType {
