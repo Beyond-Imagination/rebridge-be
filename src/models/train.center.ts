@@ -1,6 +1,6 @@
 import { TimeStamps } from '@typegoose/typegoose/lib/defaultClasses'
 import mongoose from 'mongoose'
-import { getModelForClass, index, prop, Ref } from '@typegoose/typegoose'
+import { getModelForClass, index, prop, Ref, ReturnModelType } from '@typegoose/typegoose'
 import { TrainCourse } from '@models/train.course'
 import { getCoordination } from '@/batch/utils'
 
@@ -38,8 +38,19 @@ export class TrainCenter extends TimeStamps {
     @prop()
     public hpAddr: string // 홈페이지주소
 
-    @prop({ ref: 'TrainCourse' })
+    @prop({ ref: () => TrainCourse })
     public trainCourses: Ref<TrainCourse>[]
+
+    public static async getDetailsById(this: ReturnModelType<typeof TrainCenter>, id: string): Promise<TrainCenter> {
+        const trainCenter = await this.findOne({ _id: id }).exec()
+        if (!trainCenter) {
+            throw new Error('TrainCenter not found')
+        }
+        if (trainCenter.trainCourses?.length > 0) {
+            await trainCenter.populate('trainCourses')
+        }
+        return trainCenter
+    }
 }
 
 export async function plainToTrainCenter(obj: any): Promise<TrainCenter> {
