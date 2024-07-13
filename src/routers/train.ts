@@ -3,7 +3,7 @@ import asyncify from 'express-asyncify'
 
 import { courseHealthCheck, getTrainCourseList } from '@/controllers/train.course'
 import { centerGetDetails, centerHealthCheck } from '@/controllers/train.center'
-import { categorySummary, regionDetail, regionSummary } from '@/controllers/train.statistic'
+import { categorySummary, getNCSInfo, regionDetail, regionSummary } from '@/controllers/train.statistic'
 
 const router: Router = asyncify(express.Router())
 
@@ -24,5 +24,7 @@ router.get('/statistic/region-summary', regionSummary)
 router.get('/statistic/category-summary', categorySummary)
 
 router.get('/statistic/region-detail', regionDetail)
+
+router.get('/statistic/ncsCd', getNCSInfo)
 
 export default router
