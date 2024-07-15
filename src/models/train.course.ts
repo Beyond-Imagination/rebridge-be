@@ -1,14 +1,14 @@
 import { TimeStamps } from '@typegoose/typegoose/lib/defaultClasses'
 import mongoose from 'mongoose'
-import { getModelForClass, index, prop, Ref, ReturnModelType } from '@typegoose/typegoose'
+import { index, prop, Ref, ReturnModelType } from '@typegoose/typegoose'
 import { TrainCenter } from '@models/train.center'
-import { BadRequest } from '@/types/errors'
+import { BadRequest, NotFoundError } from '@/types/errors'
 
-@index({ title: 1, category: 1 })
+@index({ title: 'text', category: 'text' })
 export class TrainCourse extends TimeStamps {
     public _id: mongoose.Types.ObjectId
 
-    @prop({ ref: 'TrainCenter' })
+    @prop({ ref: () => TrainCenter })
     public trainstCSTId: Ref<TrainCenter>
 
     @prop()
@@ -114,6 +114,15 @@ export class TrainCourse extends TimeStamps {
 
         return this.aggregate(pipeLine).exec()
     }
+
+    public static async getDetailsById(this: ReturnModelType<typeof TrainCourse>, id: string): Promise<TrainCourse> {
+        const trainCourse = await this.findById(id).exec()
+        if (!trainCourse) {
+            throw new NotFoundError(`TrainCourse [${id}] does not exist`)
+        }
+        await trainCourse.populate('trainstCSTId')
+        return trainCourse
+    }
 }
 
 interface TrainCourseRawDataType {
@@ -166,5 +175,3 @@ export const plainToTrainCourse = (obj: TrainCourseRawDataType): TrainCourse => 
 
     return trainCourse
 }
-
-export const TrainCourseModel = getModelForClass(TrainCourse)

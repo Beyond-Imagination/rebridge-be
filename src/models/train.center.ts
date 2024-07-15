@@ -1,6 +1,6 @@
 import { TimeStamps } from '@typegoose/typegoose/lib/defaultClasses'
 import mongoose from 'mongoose'
-import { getModelForClass, index, prop, Ref, ReturnModelType } from '@typegoose/typegoose'
+import { index, prop, Ref, ReturnModelType } from '@typegoose/typegoose'
 import { TrainCourse } from '@models/train.course'
 import { getCoordination } from '@/batch/utils'
 
@@ -68,5 +68,3 @@ export async function plainToTrainCenter(obj: any): Promise<TrainCenter> {
     trainCenter.hpAddr = obj.hpAddr
     return trainCenter
 }
-
-export const TrainCenterModel = getModelForClass(TrainCenter)

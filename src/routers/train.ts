@@ -1,7 +1,6 @@
 import express, { Router } from 'express'
 import asyncify from 'express-asyncify'
-
-import { courseHealthCheck, getTrainCourseList } from '@/controllers/train.course'
+import { courseGetDetails, courseHealthCheck, getTrainCourseList } from '@/controllers/train.course'
 import { centerGetDetails, centerHealthCheck } from '@/controllers/train.center'
 import { categorySummary, getNCSInfo, regionDetail, regionSummary } from '@/controllers/train.statistic'
 
@@ -11,8 +10,11 @@ router.get('/health-check', (req, res) => {
     res.status(200).send()
 })
 
+/* train course */
 router.get('/course/health-check', courseHealthCheck)
 router.get('/course/simpleList', getTrainCourseList)
+router.get('/course', courseGetDetails)
+////////////////////////////////
 
 /* train center */
 router.get('/center/health-check', centerHealthCheck)
