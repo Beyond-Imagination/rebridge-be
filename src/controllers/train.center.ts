@@ -13,6 +13,13 @@ export async function centerGetDetails(req: Request, res: Response) {
     res.status(200).json(trainCenter)
 }
 
+export async function getNearbyCenter(req: Request, res: Response) {
+    const size = req.query.size
+    const { latitude, longitude } = req.headers
+    const result = await TrainCenterModel.getNearByCenter({ latitude, longitude, size })
+    res.status(200).json(result)
+}
+
 export async function searchTrainCenter(req: Request, res: Response) {
     const query = req.query.value
     if (!query) {

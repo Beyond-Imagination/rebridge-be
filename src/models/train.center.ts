@@ -5,6 +5,7 @@ import { TrainCourse } from '@models/train.course'
 import { getCoordination } from '@/batch/utils'
 
 @index({ inoNm: 'text', telNo: 'text' })
+@index({ coordinates: '2dsphere' })
 export class TrainCenter extends TimeStamps {
     public _id: mongoose.Types.ObjectId
 
@@ -21,10 +22,10 @@ export class TrainCenter extends TimeStamps {
     public addr: string // 주소지
 
     @prop()
-    public longitude: number // 경도
-
-    @prop()
-    public latitude: number // 위도
+    public coordinates: {
+        longitude: number // 경도
+        latitude: number // 위도
+    }
 
     @prop()
     public telNo: string // 전화번호
@@ -51,6 +52,34 @@ export class TrainCenter extends TimeStamps {
         }
         return trainCenter
     }
+
+    public static async getNearByCenter(this: ReturnModelType<typeof TrainCenter>, options: any): Promise<TrainCenter[]> {
+        const { latitude, longitude, size } = options
+        const coordinates = [Number(longitude), Number(latitude)]
+        return await this.aggregate([
+            {
+                $geoNear: {
+                    spherical: true,
+                    near: {
+                        type: 'Point',
+                        coordinates: [...coordinates],
+                    },
+                    distanceField: 'distance',
+                },
+            },
+            {
+                $limit: Number(size),
+            },
+            {
+                $lookup: {
+                    from: 'traincourses',
+                    localField: 'trainCourses',
+                    foreignField: '_id',
+                    as: 'trainCourses',
+                },
+            },
+        ]).exec()
+    }
 }
 
 export async function plainToTrainCenter(obj: any): Promise<TrainCenter> {
@@ -58,9 +87,7 @@ export async function plainToTrainCenter(obj: any): Promise<TrainCenter> {
     trainCenter.inoNm = obj.inoNm
     trainCenter.zipCd = obj.zipCd
     trainCenter.addr = obj.addr
-    const coordinates = await getCoordination(obj.addr)
-    trainCenter.longitude = coordinates.longitude
-    trainCenter.latitude = coordinates.latitude
+    trainCenter.coordinates = await getCoordination(obj.addr)
     trainCenter.grade = obj.grade
     trainCenter.telNo = obj.telNo
     trainCenter.faxNo = obj.faxNo
