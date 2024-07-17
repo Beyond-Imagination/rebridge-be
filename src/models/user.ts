@@ -33,6 +33,15 @@ export class Users extends TimeStamps {
     @prop()
     public occupation: string // 사용자 이전 직업
 
+    @prop()
+    public major: string // 전공
+
+    @prop()
+    public jobObjectives: string // 사용자 희망 직업
+
+    @prop()
+    public address: string // 거주지
+
     public static async findById(this: ReturnModelType<typeof Users>, id: string): Promise<Users> {
         return await this.findOne({ _id: id }).exec()
     }

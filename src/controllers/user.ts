@@ -57,3 +57,21 @@ export async function checkToken(req: Request, res: Response) {
     const decode = req.decode
     return res.status(200).json({ message: '토큰 확인 완료', decode })
 }
+
+export async function getUserDetail(req: Request, res: Response) {
+    const user = await UserModel.findByOauthId(req.decode.id)
+    return res.status(200).json({ user })
+}
+
+export async function updateUserDetail(req: Request, res: Response) {
+    const result = await UserModel.findOneAndUpdate(
+        { oauthId: req.decode.id },
+        { occupation: req.body.occupation, major: req.body.major, jobObjectives: req.body.jobObjectives, address: req.body.address },
+    )
+
+    if (result) {
+        return res.status(200).json({ result })
+    } else {
+        throw new Error('Update is failed')
+    }
+}
