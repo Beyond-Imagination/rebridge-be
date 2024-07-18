@@ -31,13 +31,14 @@ export class Users extends TimeStamps {
     public gender: number // 0: male, 1: female
 
     @prop()
-    public occupation: string // 사용자 이전 직업
+    public occupation: string // 사용자 현재 직업
 
+    // 추가 입력 정보
     @prop()
     public major: string // 전공
 
     @prop()
-    public jobObjectives: string // 사용자 희망 직업
+    public jobObjectives: string // 희망 직종
 
     @prop()
     public address: string // 거주지
@@ -64,6 +65,21 @@ export class Users extends TimeStamps {
             expiresIn: '1h',
             jwtid: v4(),
         })
+    }
+
+    public calcAge(): number {
+        const today = new Date()
+        const age = today.getFullYear() - this.birthDate.getFullYear()
+        const monthDiff = today.getMonth() - this.birthDate.getMonth()
+
+        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < this.birthDate.getDate())) {
+            return age - 1
+        }
+        return age
+    }
+
+    public hasAddtionalInfoProvided(): boolean {
+        return !!this.major || !!this.jobObjectives || !!this.address
     }
 }
 

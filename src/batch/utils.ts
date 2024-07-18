@@ -42,8 +42,8 @@ axiosRetry(axiosInstance, {
 
 interface IKakaoMapResponse {
     documents: {
-        x: number
-        y: number
+        x: string
+        y: string
     }[]
 }
 
@@ -75,10 +75,10 @@ export const getCoordination = async (query: string) => {
             })
         ).data.documents[0]
         if (retriedResponse) {
-            return { longitude: retriedResponse.x, latitude: retriedResponse.y }
+            return { longitude: Number(retriedResponse.x), latitude: Number(retriedResponse.y) }
         }
         return { longitude: -1, latitude: -1 }
     }
 
-    return { longitude: response.x, latitude: response.y }
+    return { longitude: Number(response.x), latitude: Number(response.y) }
 }

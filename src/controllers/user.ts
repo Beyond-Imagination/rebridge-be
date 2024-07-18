@@ -2,9 +2,9 @@ import { Request, Response } from 'express'
 import { v4 as uuidv4 } from 'uuid'
 import bcrypt from 'bcrypt'
 
-import { UserModel } from '@models/user'
 import { logger } from '@utils/logger'
 import { SignUpFailError } from '@/types/errors/user'
+import { UserModel } from '@/models'
 
 export async function healthCheck(req: Request, res: Response) {
     res.status(200).send('OK')

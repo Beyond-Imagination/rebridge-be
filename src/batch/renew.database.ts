@@ -1,12 +1,12 @@
 // !WARNING!: 이 파일을 수정하지 마세요.
 import 'reflect-metadata'
-import { plainToTrainCenter, TrainCenter, TrainCenterModel } from '@models/train.center'
-import { plainToTrainCourse, TrainCourse, TrainCourseModel } from '@models/train.course'
 import * as readline from 'readline'
-import { COMPATIBLE_DATA_TYPES, extractModelFromJson } from '@/batch/utils'
 import * as fs from 'fs'
 import mongoose from 'mongoose'
+
+import { COMPATIBLE_DATA_TYPES, extractModelFromJson } from '@/batch/utils'
 import { DB_NAME, DB_URI } from '@config'
+import { plainToTrainCenter, plainToTrainCourse, TrainCenter, TrainCenterModel, TrainCourse, TrainCourseModel } from '@/models'
 
 function askQuestion(question: string): Promise<string> {
     const rl = readline.createInterface({

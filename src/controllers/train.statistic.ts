@@ -1,8 +1,8 @@
 import { Request, Response } from 'express'
 
-import { StatisticModel } from '@models/train.statistic'
 import { getNCSDetail } from '@services/ncs'
 import { INCSDetailItem } from '@/types/ncs'
+import { StatisticModel } from '@/models'
 
 export async function regionSummary(req: Request, res: Response) {
     const year = parseInt(req.query.year as string)

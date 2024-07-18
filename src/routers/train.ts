@@ -1,8 +1,21 @@
 import express, { Router } from 'express'
 import asyncify from 'express-asyncify'
-import { courseGetDetails, courseHealthCheck, getTrainCourseList } from '@/controllers/train.course'
-import { centerGetDetails, centerHealthCheck, getNearbyCenter, searchTrainCenter } from '@/controllers/train.center'
-import { categorySummary, getNCSInfo, regionDetail, regionSummary } from '@/controllers/train.statistic'
+
+import { verifyToken } from '@/middleware/verifyUser'
+import {
+    categorySummary,
+    centerGetDetails,
+    centerHealthCheck,
+    courseGetDetails,
+    courseHealthCheck,
+    getNCSInfo,
+    getNearbyCenter,
+    getTrainCourseList,
+    recommendCourse,
+    regionDetail,
+    regionSummary,
+    searchTrainCenter,
+} from '@controllers'
 
 const router: Router = asyncify(express.Router())
 
@@ -13,6 +26,7 @@ router.get('/health-check', (req, res) => {
 /* train course */
 router.get('/course/health-check', courseHealthCheck)
 router.get('/course/simpleList', getTrainCourseList)
+router.get('/course/recommend', verifyToken, recommendCourse)
 router.get('/course', courseGetDetails)
 ////////////////////////////////
 

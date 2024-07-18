@@ -15,3 +15,11 @@ export class SignUpFailError extends APIError {
         Error.captureStackTrace(this, SignUpFailError)
     }
 }
+
+export class AdditionalInformationMissingError extends APIError {
+    constructor() {
+        super(400, 603, 'additional information is missing')
+        Object.setPrototypeOf(this, AdditionalInformationMissingError)
+        Error.captureStackTrace(this, AdditionalInformationMissingError)
+    }
+}

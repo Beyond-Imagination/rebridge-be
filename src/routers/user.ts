@@ -1,6 +1,7 @@
 import express, { Router } from 'express'
 import asyncify from 'express-asyncify'
-import { addUser, checkToken, getUserDetail, healthCheck, signIn, signUp, updateUserDetail } from '@/controllers/user'
+
+import { addUser, checkToken, getUserDetail, healthCheck, signIn, signUp, updateUserDetail } from '@controllers'
 import { verifyToken } from '@/middleware/verifyUser'
 
 const router: Router = asyncify(express.Router())

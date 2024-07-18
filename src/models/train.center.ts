@@ -53,16 +53,35 @@ export class TrainCenter extends TimeStamps {
         return trainCenter
     }
 
+    public static async findNearby(this: ReturnModelType<typeof TrainCenter>, addr: string): Promise<mongoose.Types.ObjectId[]> {
+        const { longitude, latitude } = await getCoordination(addr)
+        const data = await this.aggregate([
+            {
+                $geoNear: {
+                    near: { type: 'Point', coordinates: [longitude, latitude] },
+                    distanceField: 'distance',
+                    spherical: true,
+                    maxDistance: 5000, // 미터 단위
+                },
+            },
+            {
+                $project: {
+                    _id: 1,
+                },
+            },
+        ])
+        return data.map(d => d._id)
+    }
+
     public static async getNearByCenter(this: ReturnModelType<typeof TrainCenter>, options: any): Promise<TrainCenter[]> {
         const { latitude, longitude, size } = options
-        const coordinates = [Number(longitude), Number(latitude)]
         return await this.aggregate([
             {
                 $geoNear: {
                     spherical: true,
                     near: {
                         type: 'Point',
-                        coordinates: [...coordinates],
+                        coordinates: [Number(longitude), Number(latitude)],
                     },
                     distanceField: 'distance',
                 },

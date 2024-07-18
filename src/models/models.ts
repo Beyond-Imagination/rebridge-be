@@ -1,5 +1,3 @@
-import '@models/train.course'
-import '@models/train.center'
 import { getModelForClass } from '@typegoose/typegoose'
 import { TrainCourse } from '@models/train.course'
 import { TrainCenter } from '@models/train.center'

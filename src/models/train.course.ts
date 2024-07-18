@@ -1,7 +1,11 @@
 import { TimeStamps } from '@typegoose/typegoose/lib/defaultClasses'
 import mongoose from 'mongoose'
 import { index, prop, Ref, ReturnModelType } from '@typegoose/typegoose'
+
+import { TrainCenterModel } from '@models/models'
 import { TrainCenter } from '@models/train.center'
+import { ISimpleUserInfo } from '@/types/user'
+import { getRecommendList } from '@services/recommend'
 import { BadRequest, NotFoundError } from '@/types/errors'
 
 @index({ title: 'text', category: 'text' })
@@ -39,10 +43,10 @@ export class TrainCourse extends TimeStamps {
     public yardMan: string // 훈련정원
 
     @prop()
-    public courseMan: string // 훈련비
+    public courseMan: number // 훈련비
 
     @prop()
-    public realMan: string // 자비 부담액
+    public realMan: number // 자비 부담액
 
     @prop()
     public trainGoal: string // 훈련목표
@@ -63,7 +67,7 @@ export class TrainCourse extends TimeStamps {
     public trainStrength: string // 훈련 과정 장점
 
     @prop()
-    public elEmplRate: string // 훈련기관 취업률
+    public elEmplRate: number // 훈련기관 취업률
 
     @prop()
     public trainTime: string // 훈련시간
@@ -123,6 +127,37 @@ export class TrainCourse extends TimeStamps {
         await trainCourse.populate('trainstCSTId')
         return trainCourse
     }
+
+    public static async getRecommendCourseList(this: ReturnModelType<typeof TrainCourse>, userInfo: ISimpleUserInfo): Promise<TrainCourse[]> {
+        const centers = await TrainCenterModel.findNearby(userInfo.addr)
+        const data = await this.aggregate([
+            {
+                $match: { trainstCSTId: { $in: centers } },
+            },
+            {
+                $lookup: {
+                    from: 'traincenters',
+                    localField: 'trainstCSTId',
+                    foreignField: '_id',
+                    as: 'trainCenter',
+                },
+            },
+            { $unwind: '$trainCenter' },
+            {
+                $project: {
+                    _id: 1,
+                    title: 1,
+                    elEmplRate: 1,
+                    trainStartDate: 1,
+                    trainEndDate: 1,
+                    trainTime: 1,
+                    addr: '$trainCenter.addr',
+                    inoNm: '$trainCenter.inoNm',
+                },
+            },
+        ])
+        return await getRecommendList(userInfo, data)
+    }
 }
 
 interface TrainCourseRawDataType {
@@ -132,9 +167,9 @@ interface TrainCourseRawDataType {
     trainStartDate: string
     trainEndDate: string
     trainTime: string
-    elEmplRate: string
-    courseMan: string
-    realMan: string
+    elEmplRate: number
+    courseMan: number
+    realMan: number
     category: string
     ncsCd: string
     ncsLv: string
@@ -159,7 +194,7 @@ export const plainToTrainCourse = (obj: TrainCourseRawDataType): TrainCourse => 
     trainCourse.telNo = obj.telNo
 
     trainCourse.trainAvgAge = obj.trainAvgAge || -1
-    trainCourse.elEmplRate = obj.elEmplRate || '-1'
+    trainCourse.elEmplRate = obj.elEmplRate || -1
     trainCourse.trainTarget = null
 
     trainCourse.trainStartDate = obj.trainStartDate

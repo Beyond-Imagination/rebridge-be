@@ -1,6 +1,8 @@
 import { Request, Response } from 'express'
-import { TrainCenterModel } from '@models/models'
+
+import { TrainCenterModel } from '@/models'
 import { InternalServerError } from '@/types/errors'
+
 export async function centerHealthCheck(req: Request, res: Response) {
     res.status(200).send('OK')
 }
