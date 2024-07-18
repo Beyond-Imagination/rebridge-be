@@ -119,6 +119,38 @@ export class TrainCourse extends TimeStamps {
         return this.aggregate(pipeLine).exec()
     }
 
+    public static async findByTrainCenterId(
+        this: ReturnModelType<typeof TrainCourse>,
+        trainCenterId: mongoose.Types.ObjectId,
+    ): Promise<TrainCourse[]> {
+        return this.aggregate([
+            {
+                $match: { trainstCSTId: trainCenterId },
+            },
+            {
+                $lookup: {
+                    from: 'traincenters',
+                    localField: 'trainstCSTId',
+                    foreignField: '_id',
+                    as: 'trainCenter',
+                },
+            },
+            { $unwind: '$trainCenter' },
+            {
+                $project: {
+                    _id: 1,
+                    title: 1,
+                    elEmplRate: 1,
+                    trainStartDate: 1,
+                    trainEndDate: 1,
+                    trainTime: 1,
+                    addr: '$trainCenter.addr',
+                    inoNm: '$trainCenter.inoNm',
+                },
+            },
+        ])
+    }
+
     public static async getDetailsById(this: ReturnModelType<typeof TrainCourse>, id: string): Promise<TrainCourse> {
         const trainCourse = await this.findById(id).exec()
         if (!trainCourse) {

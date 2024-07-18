@@ -47,9 +47,6 @@ export class TrainCenter extends TimeStamps {
         if (!trainCenter) {
             throw new Error('TrainCenter not found')
         }
-        if (trainCenter.trainCourses?.length > 0) {
-            await trainCenter.populate('trainCourses')
-        }
         return trainCenter
     }
 

@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 
-import { TrainCenterModel } from '@/models'
+import { TrainCenterModel, TrainCourseModel } from '@/models'
 import { InternalServerError } from '@/types/errors'
 
 export async function centerHealthCheck(req: Request, res: Response) {
@@ -9,10 +9,9 @@ export async function centerHealthCheck(req: Request, res: Response) {
 
 export async function centerGetDetails(req: Request, res: Response) {
     const trainCenter = await TrainCenterModel.getDetailsById(req.query.id)
-    if (!trainCenter) {
-        res.status(404).json({ message: 'Train center not found' })
-    }
-    res.status(200).json(trainCenter)
+    const trainCourses = await TrainCourseModel.findByTrainCenterId(trainCenter._id)
+
+    res.status(200).json({ trainCenter: trainCenter, trainCourses: trainCourses })
 }
 
 export async function getNearbyCenter(req: Request, res: Response) {
