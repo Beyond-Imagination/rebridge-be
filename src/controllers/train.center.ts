@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 
 import { TrainCenterModel, TrainCourseModel } from '@/models'
-import { InternalServerError } from '@/types/errors'
+import { NotFoundError } from '@/types/errors'
 
 export async function centerHealthCheck(req: Request, res: Response) {
     res.status(200).send('OK')
@@ -28,8 +28,9 @@ export async function searchTrainCenter(req: Request, res: Response) {
     }
 
     const result = await TrainCenterModel.find({ inoNm: { $regex: new RegExp(`${query}`, 'i') } })
-
-    if (!result) {
-        throw new InternalServerError()
+    if (!result || result.length === 0) {
+        throw new NotFoundError('search result is none')
     }
+
+    res.status(200).json(result)
 }
