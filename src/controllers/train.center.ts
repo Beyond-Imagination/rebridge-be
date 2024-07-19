@@ -28,7 +28,7 @@ export async function searchTrainCenter(req: Request, res: Response) {
     }
 
     const result = await TrainCenterModel.find({ inoNm: { $regex: new RegExp(`${query}`, 'i') } })
-    if (!!result) {
+    if (!result || result.length === 0) {
         throw new NotFoundError('search result is none')
     }
 
