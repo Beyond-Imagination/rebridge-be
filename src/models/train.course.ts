@@ -185,6 +185,7 @@ export class TrainCourse extends TimeStamps {
                     trainTime: 1,
                     addr: '$trainCenter.addr',
                     inoNm: '$trainCenter.inoNm',
+                    coordinates: '$trainCenter.coordinates',
                 },
             },
         ])

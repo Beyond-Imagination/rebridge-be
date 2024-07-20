@@ -22,9 +22,8 @@ export async function recommendCourse(req: Request, res: Response) {
     }
 
     const data = await TrainCourseModel.getRecommendCourseList(userInfo)
-    // TODO: 지도 만들고, 데이터에 대한 마커 삽입 후 전달
     res.status(200).json({
-        docs: data,
+        docs: data.slice(0, data.length >= 100 ? 100 : data.length),
     })
 }
 
