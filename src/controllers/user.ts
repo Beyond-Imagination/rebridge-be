@@ -60,7 +60,7 @@ export async function checkToken(req: Request, res: Response) {
 
 export async function getUserDetail(req: Request, res: Response) {
     const user = await UserModel.findByOauthId(req.decode.id)
-    return res.status(200).json({ user })
+    return res.status(200).json(user)
 }
 
 export async function updateUserDetail(req: Request, res: Response) {
